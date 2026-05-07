@@ -2,7 +2,16 @@ import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import MessagesClient from './MessagesClient'
-import { prisma } from '@/lib/db'
+import { db } from '@/lib/firebase'
+
+function toISOString(val: unknown): string {
+  if (!val) return new Date().toISOString()
+  if (typeof val === 'string') return val
+  if (val && typeof (val as { toDate?: () => Date }).toDate === 'function') {
+    return (val as { toDate: () => Date }).toDate().toISOString()
+  }
+  return new Date().toISOString()
+}
 
 export default async function MessagesPage({ params }: { params: Promise<{ threadId: string }> }) {
   const cookieStore = await cookies()
@@ -14,31 +23,33 @@ export default async function MessagesPage({ params }: { params: Promise<{ threa
 
   const { threadId } = await params
 
-  const thread = await prisma.messageThread.findUnique({
-    where: { id: threadId },
-    include: {
-      retailer: { select: { shopName: true } },
-      wholesaler: { select: { shopName: true } },
-      messages: { orderBy: { timestamp: 'asc' } },
-    },
-  })
+  const [threadDoc, messagesSnap] = await Promise.all([
+    db.collection('messageThreads').doc(threadId).get(),
+    db.collection('messages').where('threadId', '==', threadId).orderBy('timestamp', 'asc').get(),
+  ])
 
-  if (!thread) redirect('/dashboard/retailer')
+  if (!threadDoc.exists) redirect('/dashboard/retailer')
+  const threadData = threadDoc.data()!
+
+  const [retailerDoc, wholesalerDoc] = await Promise.all([
+    db.collection('users').doc(threadData.retailerId).get(),
+    db.collection('users').doc(threadData.wholesalerId).get(),
+  ])
 
   return (
     <MessagesClient
       thread={{
-        id: thread.id,
-        product: thread.product,
-        retailerName: thread.retailer.shopName,
-        wholesalerName: thread.wholesaler.shopName,
+        id: threadId,
+        product: threadData.product,
+        retailerName: retailerDoc.exists ? retailerDoc.data()!.shopName : 'Retailer',
+        wholesalerName: wholesalerDoc.exists ? wholesalerDoc.data()!.shopName : 'Wholesaler',
       }}
-      initialMessages={thread.messages.map(m => ({
-        id: m.id,
-        senderId: m.senderId,
-        text: m.text,
-        timestamp: m.timestamp.toISOString(),
-        read: m.read,
+      initialMessages={messagesSnap.docs.map(m => ({
+        id: m.data().id,
+        senderId: m.data().senderId,
+        text: m.data().text,
+        timestamp: toISOString(m.data().timestamp),
+        read: m.data().read,
       }))}
       userId={payload.userId}
     />

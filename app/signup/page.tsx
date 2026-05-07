@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { getClientAuth } from '@/lib/firebase-client'
 
 const SHOP_TYPES = ['provision', 'tailoring', 'pharmacy', 'foodstuffs', 'stationery', 'other']
 const NIGERIA_STATES = [
@@ -54,6 +56,15 @@ export default function SignupPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Signup failed')
+
+      // Sign into Firebase Auth so client SDK has a session for offline persistence
+      try {
+        const auth = getClientAuth()
+        await createUserWithEmailAndPassword(auth, `${form.phone}@pic.app`, form.password)
+      } catch {
+        // Firebase Auth error is non-fatal; JWT cookie auth still works
+      }
+
       router.push(form.role === 'retailer' ? '/dashboard/retailer' : '/dashboard/wholesaler')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Signup failed')

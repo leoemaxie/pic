@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { savePendingPurchase, syncPendingPurchases } from '@/lib/offline-db'
 
 interface PurchaseLog {
   id: string
@@ -80,6 +81,29 @@ export default function RetailerDashboardClient({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Sync any pending offline purchases when back online
+  useEffect(() => {
+    function handleOnline() {
+      syncPendingPurchases(async (purchase) => {
+        await fetch('/api/purchases', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: purchase.message }),
+        })
+      }).then(count => {
+        if (count > 0) {
+          setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: `🔄 Synced ${count} offline purchase${count > 1 ? 's' : ''} to server.`,
+          }])
+        }
+      }).catch(() => {})
+    }
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [])
+
   async function sendMessage() {
     if (!input.trim() || sending) return
     const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: input }
@@ -113,6 +137,8 @@ export default function RetailerDashboardClient({
         }])
       }
     } catch {
+      // Save to IndexedDB for later sync
+      await savePendingPurchase({ id: Date.now().toString(), message: userMsg.content, timestamp: new Date().toISOString(), synced: false }).catch(() => {})
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',

@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { getClientAuth } from '@/lib/firebase-client'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,6 +24,15 @@ export default function LoginPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Login failed')
+
+      // Sign into Firebase Auth for client SDK offline persistence
+      try {
+        const auth = getClientAuth()
+        await signInWithEmailAndPassword(auth, `${form.phone}@pic.app`, form.password)
+      } catch {
+        // Firebase Auth error is non-fatal; JWT cookie auth still works
+      }
+
       router.push(data.role === 'retailer' ? '/dashboard/retailer' : '/dashboard/wholesaler')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
