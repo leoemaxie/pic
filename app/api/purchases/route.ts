@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { db } from '@/lib/firebase'
 import { verifyToken } from '@/lib/auth'
 import { parseMessage } from '@/lib/nlp'
+import admin from 'firebase-admin'
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get('pic-token')?.value
@@ -10,34 +11,40 @@ export async function POST(req: NextRequest) {
   const payload = verifyToken(token)
   if (!payload) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const user = await prisma.user.findUnique({ where: { id: payload.userId } })
-  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  const userDoc = await db.collection('users').doc(payload.userId).get()
+  if (!userDoc.exists) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  const user = userDoc.data()!
 
   const { message } = await req.json()
   const parsed = parseMessage(message)
 
-  const log = await prisma.purchaseLog.create({
-    data: {
-      userId: user.id,
-      rawMessage: message,
-      product: parsed.product,
-      quantity: parsed.quantity,
-      quantityUnit: parsed.quantityUnit,
-      pricePerUnit: parsed.pricePerUnit,
-      totalPrice: parsed.totalPrice,
-      supplier: parsed.supplier,
-      supplierType: parsed.supplierType,
-      location: user.location,
-      confidenceScore: parsed.confidence,
-    },
-  })
+  const logRef = db.collection('purchaseLogs').doc()
+  const logData = {
+    id: logRef.id,
+    userId: user.id,
+    rawMessage: message,
+    product: parsed.product,
+    quantity: parsed.quantity,
+    quantityUnit: parsed.quantityUnit,
+    pricePerUnit: parsed.pricePerUnit,
+    totalPrice: parsed.totalPrice,
+    supplier: parsed.supplier ?? null,
+    supplierType: parsed.supplierType,
+    location: user.location,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    synced: true,
+    confidenceScore: parsed.confidence,
+  }
+  await logRef.set(logData)
 
-  const marketInsight = await prisma.marketIntelligence.findFirst({
-    where: { product: parsed.product },
-  })
+  const marketSnap = await db.collection('marketIntelligence')
+    .where('product', '==', parsed.product)
+    .limit(1)
+    .get()
 
   let marketInsightText = ''
-  if (marketInsight && parsed.pricePerUnit > 0) {
+  if (!marketSnap.empty && parsed.pricePerUnit > 0) {
+    const marketInsight = marketSnap.docs[0].data()
     if (parsed.pricePerUnit < marketInsight.priceMean * 0.95) {
       marketInsightText = `💚 Great deal! Others pay ₦${Math.round(marketInsight.priceMean).toLocaleString()} on average.`
     } else if (parsed.pricePerUnit > marketInsight.priceMean * 1.05) {
@@ -47,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ log, parsed, marketInsight: marketInsightText })
+  return NextResponse.json({ log: logData, parsed, marketInsight: marketInsightText })
 }
 
 export async function GET(req: NextRequest) {
@@ -56,10 +63,12 @@ export async function GET(req: NextRequest) {
   const payload = verifyToken(token)
   if (!payload) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const logs = await prisma.purchaseLog.findMany({
-    where: { userId: payload.userId },
-    orderBy: { timestamp: 'desc' },
-    take: 50,
-  })
+  const snap = await db.collection('purchaseLogs')
+    .where('userId', '==', payload.userId)
+    .orderBy('timestamp', 'desc')
+    .limit(50)
+    .get()
+
+  const logs = snap.docs.map(d => d.data())
   return NextResponse.json(logs)
 }

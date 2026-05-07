@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { db } from '@/lib/firebase'
+import admin from 'firebase-admin'
 
 const SEED_DATA = [
   { product: 'rice', location: 'Lagos', priceMin: 7800, priceMax: 9200, priceMean: 8500, trend: 'stable', buyerCount: 45 },
@@ -22,34 +23,27 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const created = []
+  const batch = db.collection('marketIntelligence').firestore.batch()
+
   for (const item of SEED_DATA) {
-    const intel = await prisma.marketIntelligence.upsert({
-      where: { id: `${item.product}-${item.location}`.toLowerCase() },
-      create: {
-        id: `${item.product}-${item.location}`.toLowerCase(),
-        product: item.product,
-        location: item.location,
-        priceMin: item.priceMin,
-        priceMax: item.priceMax,
-        priceMedian: item.priceMean,
-        priceMean: item.priceMean,
-        buyerCount: item.buyerCount,
-        trend: item.trend,
-        volatility: (item.priceMax - item.priceMin) / 4,
-      },
-      update: {
-        priceMin: item.priceMin,
-        priceMax: item.priceMax,
-        priceMedian: item.priceMean,
-        priceMean: item.priceMean,
-        buyerCount: item.buyerCount,
-        trend: item.trend,
-        lastUpdated: new Date(),
-      },
-    })
-    created.push(intel)
+    const docId = `${item.product}-${item.location}`.toLowerCase()
+    const ref = db.collection('marketIntelligence').doc(docId)
+    batch.set(ref, {
+      id: docId,
+      product: item.product,
+      location: item.location,
+      priceMin: item.priceMin,
+      priceMax: item.priceMax,
+      priceMedian: item.priceMean,
+      priceMean: item.priceMean,
+      buyerCount: item.buyerCount,
+      trend: item.trend,
+      volatility: (item.priceMax - item.priceMin) / 4,
+      lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true })
   }
 
-  return NextResponse.json({ seeded: created.length, data: created })
+  await batch.commit()
+
+  return NextResponse.json({ seeded: SEED_DATA.length })
 }
