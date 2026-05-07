@@ -4,6 +4,8 @@ import { db } from '@/lib/firebase'
 import { redirect } from 'next/navigation'
 import RetailerDashboardClient from './RetailerDashboardClient'
 
+const MAX_MARKET_INTEL_PRODUCTS = 10
+
 function toISOString(val: unknown): string {
   if (!val) return new Date().toISOString()
   if (typeof val === 'string') return val
@@ -48,8 +50,8 @@ export default async function RetailerDashboard() {
 
   const products = [...new Set(recentLogs.map(l => l.product ?? ''))].filter(Boolean) as string[]
   const marketSnap = products.length > 0
-    ? await db.collection('marketIntelligence').where('product', 'in', products.slice(0, 10)).limit(10).get()
-    : await db.collection('marketIntelligence').limit(10).get()
+    ? await db.collection('marketIntelligence').where('product', 'in', products.slice(0, MAX_MARKET_INTEL_PRODUCTS)).limit(MAX_MARKET_INTEL_PRODUCTS).get()
+    : await db.collection('marketIntelligence').limit(MAX_MARKET_INTEL_PRODUCTS).get()
   const marketData = marketSnap.docs.map(d => d.data())
 
   if (briefingDoc) {

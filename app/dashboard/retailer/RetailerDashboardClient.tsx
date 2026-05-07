@@ -95,7 +95,7 @@ export default function RetailerDashboardClient({
           setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'assistant',
-            content: `🔄 Synced ${count} offline purchase${count > 1 ? 's' : ''} to server.`,
+            content: `🔄 Synced ${count} offline purchase${count !== 1 ? 's' : ''} to server.`,
           }])
         }
       }).catch(() => {})

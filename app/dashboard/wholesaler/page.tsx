@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 import admin from 'firebase-admin'
 import WholesalerDashboardClient from './WholesalerDashboardClient'
 
+const MAX_PRODUCTS_PER_QUERY = 30
+const MAX_LOGS_FALLBACK = 100
+
 function toISOString(val: unknown): string {
   if (!val) return new Date().toISOString()
   if (typeof val === 'string') return val
@@ -47,12 +50,12 @@ export default async function WholesalerDashboard() {
   if (productList.length > 0) {
     logsSnap = await db.collection('purchaseLogs')
       .where('timestamp', '>=', sevenDaysAgo)
-      .where('product', 'in', productList.slice(0, 30))
+      .where('product', 'in', productList.slice(0, MAX_PRODUCTS_PER_QUERY))
       .get()
   } else {
     logsSnap = await db.collection('purchaseLogs')
       .where('timestamp', '>=', sevenDaysAgo)
-      .limit(100)
+      .limit(MAX_LOGS_FALLBACK)
       .get()
   }
 

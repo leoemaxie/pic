@@ -38,7 +38,7 @@ export async function getPendingPurchases(): Promise<PendingPurchase[]> {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_PURCHASES, 'readonly')
-    const req = tx.objectStore(STORE_PURCHASES).index('synced').getAll(IDBKeyRange.only(0))
+    const req = tx.objectStore(STORE_PURCHASES).index('synced').getAll(IDBKeyRange.only(false))
     req.onsuccess = () => resolve(req.result as PendingPurchase[])
     req.onerror = () => reject(req.error)
   })
