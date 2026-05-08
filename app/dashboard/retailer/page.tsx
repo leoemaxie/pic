@@ -18,13 +18,13 @@ function toISOString(val: unknown): string {
 export default async function RetailerDashboard() {
   const cookieStore = await cookies()
   const token = cookieStore.get('pic-token')?.value
-  if (!token) redirect('/login')
+  //if (!token) redirect('/login')
 
-  const payload = verifyToken(token)
-  if (!payload || payload.role !== 'retailer') redirect('/login')
+  //const payload = verifyToken(token)
+ // if (!payload || payload.role !== 'retailer') redirect('/login')
 
-  const userDoc = await db.collection('users').doc(payload.userId).get()
-  if (!userDoc.exists) redirect('/login')
+  const userDoc = await db.collection('users').doc('payload.userId').get()
+ // if (!userDoc.exists) redirect('/login')
   const user = userDoc.data()!
 
   const [logsSnap, briefingSnap] = await Promise.all([

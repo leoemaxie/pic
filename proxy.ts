@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const publicRoutes = ['/', '/login', '/signup', '/api/auth']
+  const publicRoutes = ['/', '/login', '/signup', '/api/auth', '/dashboard/*']
   const isPublic = publicRoutes.some(route => pathname.startsWith(route))
 
   const token = request.cookies.get('pic-token')?.value
