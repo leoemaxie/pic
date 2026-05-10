@@ -70,7 +70,10 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top, rgba(255, 216, 154, 0.14), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(230, 57, 70, 0.08), transparent 26%),
+    var(--bg);
 }
 
 body {

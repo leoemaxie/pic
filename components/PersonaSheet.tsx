@@ -1,6 +1,8 @@
+'use client';
+
 import { Sun, Moon, User, Store, RotateCcw, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "../lib/theme";
+import { useTheme } from "@/lib/theme";
 
 export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { theme, toggleTheme, persona, setPersona, hasRecords, setHasRecords } = useTheme();
@@ -8,11 +10,11 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center lg:px-6" onClick={onClose}>
       <div className="absolute inset-0 bg-black/40 fade-in" />
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 slide-up"
+        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 slide-up lg:max-w-[460px] lg:mb-6 lg:rounded-[28px] lg:border lg:border-bd/80 lg:shadow-float"
       >
         <div className="flex justify-center mb-3">
           <div className="w-10 h-1 rounded-full bg-bd-strong" />
@@ -99,7 +101,7 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <div className="mt-5 pt-4 border-t border-bd text-center text-[11px] text-text-subtle italic">
-          PIC · {new Date().getFullYear()} &copy; All rights reserved
+          PIC · Wicked Lab Hackathon · 2026
         </div>
       </div>
     </div>
