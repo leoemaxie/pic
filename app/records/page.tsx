@@ -10,7 +10,7 @@ import { Pill } from "@/components/Pill";
 import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export function Records() {
+export default function Records() {
   const { hasRecords, setHasRecords } = useTheme();
   const router = useRouter();
 
@@ -149,9 +149,8 @@ function Stat({
         {label}
       </div>
       <div
-        className={`text-[20px] font-extrabold tracking-[-0.02em] mt-0.5 leading-none ${
-          tone ? colorMap[tone] : "text-text"
-        }`}
+        className={`text-[20px] font-extrabold tracking-[-0.02em] mt-0.5 leading-none ${tone ? colorMap[tone] : "text-text"
+          }`}
       >
         {value}
       </div>

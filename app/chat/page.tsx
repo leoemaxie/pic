@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 type Phase = 0 | 1 | 2 | 3;
 
-export function Chat() {
+export default function Chat() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>(0);
   const scrollRef = useRef<HTMLDivElement>(null);

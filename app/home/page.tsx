@@ -11,7 +11,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaSheet } from "@/components/PersonaSheet";
 
-export function Home() {
+export default function Home() {
   const [sheetOpen, setSheetOpen] = useState(false);
   return (
     <div className="min-h-[100dvh] w-full flex flex-col bg-bg lg:min-h-[calc(100dvh-3rem)] lg:my-6 lg:max-w-[460px] lg:mx-auto lg:rounded-[36px] lg:border lg:border-bd/80 lg:shadow-float lg:overflow-hidden">

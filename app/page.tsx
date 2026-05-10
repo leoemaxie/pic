@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export function Splash() {
+export default function Splash() {
   const router = useRouter();
   useEffect(() => {
     const t = setTimeout(() => router.push("/onboarding/1"), 2100);

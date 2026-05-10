@@ -9,7 +9,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/lib/theme";
 
-export function Wholesaler() {
+export default function Wholesaler() {
   const { setPersona } = useTheme();
   const router = useRouter();
 

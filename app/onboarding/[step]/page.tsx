@@ -1,5 +1,5 @@
 'use client';
-
+import React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ReactNode } from "react";
@@ -108,6 +108,13 @@ export function Onboarding({ step }: { step: string }) {
       </div>
     </div>
   );
+}
+
+export default function OnboardingPage({ params }: { params: Promise<{ step?: string | string[] }> }) {
+  const resolved = React.use(params);
+  const raw = resolved?.step;
+  const step = Array.isArray(raw) ? raw[0] : raw ?? "1";
+  return <Onboarding step={step} />;
 }
 
 function ChatIllo() {
