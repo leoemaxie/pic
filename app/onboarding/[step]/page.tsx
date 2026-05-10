@@ -1,7 +1,7 @@
-'use client';
-
 import { Onboarding } from '@/lib/screens/Onboarding';
 
-export default function OnboardingPage({ params }: { params: { step: string } }) {
-  return <Onboarding step={params.step} />;
+export default async function OnboardingPage({ params }: { params: Promise<{ step: string }> }) {
+  const { step } = await params;
+
+  return <Onboarding step={step} />;
 }
