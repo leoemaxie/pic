@@ -11,7 +11,7 @@ export default function Splash() {
   }, [router]);
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center justify-between bg-bg fade-in py-20 lg:min-h-[calc(100dvh-3rem)] lg:my-6 lg:max-w-[460px] lg:mx-auto lg:rounded-[36px] lg:border lg:border-bd/80 lg:shadow-float lg:overflow-hidden">
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg fade-in py-20 lg:py-24">
       <div className="flex-1 flex flex-col items-center justify-center w-full relative">
         <div
           className="absolute top-[12%] left-[18%] w-12 h-14 bg-gold rounded-xl flex items-center justify-center text-gold-fg text-[22px] font-extrabold shadow-float float-soft"

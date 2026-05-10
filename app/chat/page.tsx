@@ -36,7 +36,7 @@ export default function Chat() {
   }, [phase]);
 
   return (
-    <div className="h-screen w-full flex flex-col bg-bg">
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
       <div className="flex items-center gap-2.5 px-5 pt-4 pb-3.5 border-b border-bd">
         <button
           onClick={() => router.push("/home")}

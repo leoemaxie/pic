@@ -19,7 +19,7 @@ export default function Wholesaler() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col bg-bg lg:min-h-[calc(100dvh-3rem)] lg:my-6 lg:max-w-[460px] lg:mx-auto lg:rounded-[36px] lg:border lg:border-bd/80 lg:shadow-float lg:overflow-hidden">
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
       <div className="px-5 pt-5 pb-3 flex justify-between items-start">
         <div className="flex items-start gap-3">
           <button

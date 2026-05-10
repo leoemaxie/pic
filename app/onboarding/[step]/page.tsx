@@ -60,7 +60,7 @@ export function Onboarding({ step }: { step: string }) {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col bg-bg lg:min-h-[calc(100dvh-3rem)] lg:my-6 lg:max-w-[460px] lg:mx-auto lg:rounded-[36px] lg:border lg:border-bd/80 lg:shadow-float lg:overflow-hidden" key={idx}>
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg" key={idx}>
       <div className="flex justify-between items-start px-5 pt-4 pb-1">
         <div className="w-10" />
         <div className="text-center">

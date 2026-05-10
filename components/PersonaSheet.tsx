@@ -10,11 +10,11 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center lg:px-6" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center lg:items-center lg:justify-end lg:px-8" onClick={onClose}>
       <div className="absolute inset-0 bg-black/40 fade-in" />
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 slide-up lg:max-w-[460px] lg:mb-6 lg:rounded-[28px] lg:border lg:border-bd/80 lg:shadow-float"
+        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 slide-up lg:max-w-[420px] lg:rounded-[28px] lg:border lg:border-bd/80 lg:shadow-float lg:max-h-[calc(100dvh-4rem)] lg:overflow-y-auto"
       >
         <div className="flex justify-center mb-3">
           <div className="w-10 h-1 rounded-full bg-bd-strong" />
