@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Store, Warehouse } from "lucide-react";
 import { ReactNode } from "react";
 import { DotIndicator } from "@/components/DotIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -54,6 +54,14 @@ export function Onboarding({ step }: { step: string }) {
   const slide = SLIDES[idx];
   const isLast = idx === 2;
 
+  const chooseRole = (role: "retailer" | "wholesaler") => {
+    if (role === "wholesaler") {
+      router.push("/wholesaler");
+      return;
+    }
+    router.push("/home");
+  };
+
   const next = () => {
     if (isLast) router.push("/home");
     else router.push(`/onboarding/${idx + 2}`);
@@ -91,20 +99,55 @@ export function Onboarding({ step }: { step: string }) {
         <DotIndicator total={3} active={idx} />
       </div>
 
-      <div className="px-6 pb-7 flex flex-col gap-1">
-        <button
-          onClick={next}
-          className="w-full bg-cta-bg text-cta-fg rounded-full py-4 font-bold text-[15px] tracking-[-0.01em] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-        >
-          {isLast ? "Get started" : "Continue"}
-          <ArrowRight size={16} strokeWidth={2.4} />
-        </button>
-        <button
-          onClick={() => router.push("/home")}
-          className="text-[13px] font-medium text-text-muted py-2.5"
-        >
-          {isLast ? "—" : "I'll skip the tour"}
-        </button>
+      <div className="px-6 pb-7 flex flex-col gap-2">
+        {isLast ? (
+          <>
+            <p className="text-center text-[12px] font-semibold tracking-[0.01em] text-text-subtle mb-1">
+              Choose how you want to use PIC
+            </p>
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                onClick={() => chooseRole("retailer")}
+                className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
+                aria-label="Continue as Retailer"
+              >
+                <div className="w-9 h-9 rounded-xl bg-good-bg border border-good-bd flex items-center justify-center text-good-fg">
+                  <Store size={17} strokeWidth={2.2} />
+                </div>
+                <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">Retailer</div>
+                <div className="text-[11px] text-text-muted mt-0.5">Buy smarter for your shop</div>
+              </button>
+
+              <button
+                onClick={() => chooseRole("wholesaler")}
+                className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
+                aria-label="Continue as Wholesaler"
+              >
+                <div className="w-9 h-9 rounded-xl bg-rose flex items-center justify-center text-rose-fg">
+                  <Warehouse size={17} strokeWidth={2.2} />
+                </div>
+                <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">Wholesaler</div>
+                <div className="text-[11px] text-text-muted mt-0.5">Sell and reach more retailers</div>
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={next}
+              className="w-full bg-cta-bg text-cta-fg rounded-full py-4 font-bold text-[15px] tracking-[-0.01em] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+            >
+              Continue
+              <ArrowRight size={16} strokeWidth={2.4} />
+            </button>
+            <button
+              onClick={() => router.push("/home")}
+              className="text-[13px] font-medium text-text-muted py-2.5"
+            >
+              I'll skip the tour
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
