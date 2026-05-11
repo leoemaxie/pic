@@ -12,6 +12,8 @@ type Ctx = {
   setPersona: (p: Persona) => void;
   hasRecords: boolean;
   setHasRecords: (b: boolean) => void;
+  userId: string;
+  setUserId: (id: string) => void;
 };
 
 const ThemeContext = createContext<Ctx | null>(null);
@@ -20,6 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
   const [persona, setPersona] = useState<Persona>("retailer");
   const [hasRecords, setHasRecords] = useState(true);
+  const [userId, setUserId] = useState<string>("");
 
   const value: Ctx = {
     theme,
@@ -28,6 +31,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setPersona,
     hasRecords,
     setHasRecords,
+    userId,
+    setUserId,
   };
 
   return (

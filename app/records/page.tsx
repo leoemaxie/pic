@@ -1,6 +1,7 @@
 'use client';
 
 import { RotateCcw, MessageCircle } from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/lib/theme";
 import { Card } from "@/components/Card";
@@ -9,10 +10,12 @@ import { DealRow } from "@/components/DealRow";
 import { Pill } from "@/components/Pill";
 import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MiniBarChart } from "@/components/MiniBarChart";
 
 export default function Records() {
   const { hasRecords, setHasRecords } = useTheme();
   const router = useRouter();
+  const [view, setView] = useState<"purchases" | "trends">("purchases");
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
@@ -39,7 +42,34 @@ export default function Records() {
         </div>
       </div>
 
-      {hasRecords ? <Populated /> : <Empty onAsk={() => router.push("/chat")} />}
+      {hasRecords && (
+        <div className="px-5 pt-3 pb-3 flex gap-2 border-b border-bd">
+          <button
+            onClick={() => setView("purchases")}
+            className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
+              view === "purchases"
+                ? "bg-cta-bg text-cta-fg"
+                : "bg-surface border border-bd text-text"
+            }`}
+          >
+            Purchases
+          </button>
+          <button
+            onClick={() => setView("trends")}
+            className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
+              view === "trends"
+                ? "bg-cta-bg text-cta-fg"
+                : "bg-surface border border-bd text-text"
+            }`}
+          >
+            Trends
+          </button>
+        </div>
+      )}
+
+      {hasRecords && view === "purchases" && <Populated />}
+      {hasRecords && view === "trends" && <TrendsView />}
+      {!hasRecords && <Empty onAsk={() => router.push("/chat")} />}
 
       <BottomNav />
     </div>
@@ -61,7 +91,7 @@ function Populated() {
       <Card>
         <div className="flex items-center justify-between gap-3">
           <SectionLabel>Recent purchases · 7</SectionLabel>
-          <Pill variant="alert">▲ Rice trend</Pill>
+          <Pill variant="alert">Rice price history</Pill>
         </div>
         <div className="mt-2">
           <DealRow
@@ -124,7 +154,7 @@ function Populated() {
       </Card>
 
       <div className="text-center text-[11px] text-text-subtle py-2 italic">
-        All purchases auto-logged from your chat with PIC.
+        Purchases and comparisons are logged together for easier review.
       </div>
     </div>
   );
@@ -201,6 +231,69 @@ function Empty({ onAsk }: { onAsk: () => void }) {
         <MessageCircle size={16} strokeWidth={2.2} />
         Start asking
       </button>
+    </div>
+  );
+}
+
+function TrendsView() {
+  const trends = [
+    {
+      product: "Rice",
+      entries: [
+        { date: "Nov 7", price: "₦70k" },
+        { date: "Nov 14", price: "₦72k" },
+        { date: "Nov 21", price: "₦74k" },
+        { date: "Nov 28", price: "₦74k" },
+      ],
+    },
+    {
+      product: "Tomatoes",
+      entries: [
+        { date: "Nov 12", price: "₦9.2k" },
+        { date: "Nov 26", price: "₦9.5k" },
+      ],
+    },
+    {
+      product: "Palm oil",
+      entries: [
+        { date: "Nov 24", price: "₦18.2k" },
+      ],
+    },
+  ];
+
+  return (
+    <div className="flex-1 overflow-y-auto px-5 flex flex-col gap-3 pb-2 fade-in">
+      {trends.map((trend) => (
+        <Card key={trend.product}>
+          <SectionLabel>{trend.product} · Price history</SectionLabel>
+          <div className="mt-4">
+            <MiniBarChart
+              bars={trend.entries.map((e, idx) => ({
+                label: e.price,
+                barHeight: 20 + idx * 8,
+                active: idx === trend.entries.length - 1,
+              }))}
+            />
+          </div>
+          <div className="mt-4 flex flex-col gap-2">
+            {trend.entries.map((entry, idx) => (
+              <div key={idx} className="flex justify-between items-center text-[13px]">
+                <span className="text-text-subtle">{entry.date}</span>
+                <span className="font-bold text-text">{entry.price}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 p-3 rounded-[12px] bg-surface-2 border border-bd">
+            <div className="text-[12px] leading-[1.5] text-text-muted">
+              You've paid varying prices for {trend.product.toLowerCase()} across {trend.entries.length} purchases.
+              This history helps you recognize when prices are favorable.
+            </div>
+          </div>
+        </Card>
+      ))}
+      <div className="text-center text-[11px] text-text-subtle py-2 italic">
+        All data from your actual purchases. Use to compare trends and strategies.
+      </div>
     </div>
   );
 }

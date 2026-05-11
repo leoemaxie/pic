@@ -1,0 +1,317 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Base user entity - can be a retailer or wholesaler
+model User {
+  id        String     @id @default(cuid())
+  phone     String     @unique
+  name      String
+  persona   String     @db.VarChar(20) // "retailer" or "wholesaler"
+  region    String?    @db.VarChar(100)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  retailer  Retailer?
+  wholesaler Wholesaler?
+
+  @@index([persona])
+}
+
+// Retailer profile - extends User
+model Retailer {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Supplier relationships
+  suppliers SupplierContact[]
+  
+  // RFQs initiated by this retailer
+  rfqs      RFQ[]
+  
+  // Purchase history
+  purchases Purchase[]
+  
+  // Watchlist for low-stock triggers
+  watchlist WatchlistItem[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// Wholesaler profile - extends User
+model Wholesaler {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Inventory
+  inventory InventoryItem[]
+  
+  // Offers made in response to RFQs
+  offers    Offer[]
+  
+  // Messages received from RFQ system
+  messages  RFQMessage[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// Staple products - limited to 8 items
+model Product {
+  id        String     @id @default(cuid())
+  name      String     @unique @db.VarChar(100)
+  unit      String     @db.VarChar(50) // "bag", "crate", "carton", "jug", etc.
+  category  String     @db.VarChar(50) // "grain", "vegetable", "oil", "protein"
+  
+  // Relations
+  rfqs      RFQ[]
+  offers    Offer[]
+  purchases Purchase[]
+  inventory InventoryItem[]
+  snapshots PriceSnapshot[]
+  watchlist WatchlistItem[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// Supplier contact - who a retailer buys from
+model SupplierContact {
+  id        String     @id @default(cuid())
+  retailerId String
+  retailer  Retailer   @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+  
+  // Wholesaler info
+  wholesalerId String?
+  wholesaler   Wholesaler? @relation(fields: [wholesalerId], references: [id])
+  
+  name      String     @db.VarChar(200)
+  phone     String     @db.VarChar(20) // WhatsApp number
+  region    String     @db.VarChar(100)
+  
+  // Consent tracking
+  consentedToRFQ Boolean @default(false)
+  lastRFQDate DateTime?
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@unique([retailerId, phone])
+  @@index([retailerId])
+}
+
+// Request For Quote - initiated by retailer
+model RFQ {
+  id        String     @id @default(cuid())
+  retailerId String
+  retailer  Retailer   @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  quantity  Int        // Units requested
+  unit      String     @db.VarChar(50)
+  
+  // Trigger
+  triggeredBy String   @db.VarChar(30) // "manual" or "low_stock"
+  
+  // Status
+  status    String     @db.VarChar(20) @default("active") // "active", "fulfilled", "cancelled"
+  
+  // Fan-out tracking
+  messages  RFQMessage[]
+  offers    Offer[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@index([retailerId])
+  @@index([productId])
+  @@index([status])
+}
+
+// Outbound message to a wholesaler for an RFQ
+model RFQMessage {
+  id        String     @id @default(cuid())
+  rfqId     String
+  rfq       RFQ        @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  
+  wholesalerId String
+  wholesaler Wholesaler @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  
+  // Message tracking
+  channel   String     @db.VarChar(20) @default("whatsapp") // "whatsapp", "sms", "in_app"
+  messageId String?    // Twilio SID or internal ID
+  
+  status    String     @db.VarChar(20) @default("pending") // "pending", "sent", "delivered", "failed"
+  sentAt    DateTime?
+  
+  // Incoming reply parsing
+  replyStatus String   @db.VarChar(20) @default("awaiting") // "awaiting", "received", "parsed", "error"
+  rawReply  String?    @db.Text
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@unique([rfqId, wholesalerId])
+  @@index([rfqId])
+  @@index([wholesalerId])
+  @@index([status])
+}
+
+// Structured offer response from a wholesaler
+model Offer {
+  id        String     @id @default(cuid())
+  rfqId     String
+  rfq       RFQ        @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  
+  wholesalerId String
+  wholesaler Wholesaler @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  // Offer details
+  quantity  Int
+  unitPrice Int        // In smallest currency unit (e.g., kobo)
+  
+  // Logistics
+  deliveryETA String   @db.VarChar(100) // "1 day", "2-3 days", "same day"
+  location  String     @db.VarChar(100)
+  distance  String?    @db.VarChar(50)  // "same city", "nearby state", "far"
+  
+  // Ranking score
+  score     Float?     // Composite multi-factor score
+  priceScore Float?    // Normalized price component
+  deliveryScore Float? // Normalized delivery component
+  distanceScore Float? // Normalized distance component
+  
+  // Selection
+  selected  Boolean    @default(false)
+  selectedAt DateTime?
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@index([rfqId])
+  @@index([wholesalerId])
+  @@index([selected])
+}
+
+// Historical purchase logged by retailer
+model Purchase {
+  id        String     @id @default(cuid())
+  retailerId String
+  retailer  Retailer   @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  unitPrice Int        // In smallest currency unit
+  totalPrice Int
+  
+  wholesalerName String? @db.VarChar(200)
+  location  String?    @db.VarChar(100)
+  
+  // Assessment
+  marketAvg Int?      // Market average price for comparison
+  assessment String   @db.VarChar(20) @default("fair") // "fair", "overpaid", "opportunity"
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@index([retailerId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+// Price snapshot for trend tracking
+model PriceSnapshot {
+  id        String     @id @default(cuid())
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  location  String     @db.VarChar(100)
+  minPrice  Int        // Minimum price observed
+  maxPrice  Int        // Maximum price observed
+  avgPrice  Int        // Average price
+  count     Int        // Number of offers/purchases in this snapshot
+  
+  snapshotDate DateTime @default(now())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@unique([productId, location, snapshotDate])
+  @@index([productId])
+  @@index([snapshotDate])
+}
+
+// Inventory for wholesalers
+model InventoryItem {
+  id        String     @id @default(cuid())
+  wholesalerId String
+  wholesaler Wholesaler @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  unitPrice Int
+  status    String     @db.VarChar(20) @default("available") // "available", "low_stock", "out_of_stock"
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@unique([wholesalerId, productId])
+  @@index([wholesalerId])
+}
+
+// Watchlist for retailers - triggers low-stock RFQs
+model WatchlistItem {
+  id        String     @id @default(cuid())
+  retailerId String
+  retailer  Retailer   @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product    @relation(fields: [productId], references: [id])
+  
+  minStockLevel Int    // Below this, trigger RFQ
+  reorderQuantity Int  // How much to order when triggered
+  
+  lastRFQTriggeredAt DateTime?
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  @@unique([retailerId, productId])
+  @@index([retailerId])
+}
+
+// Audit log for RFQ lifecycle
+model AuditLog {
+  id        String     @id @default(cuid())
+  action    String     @db.VarChar(100) // "rfq_created", "message_sent", "offer_received", "offer_selected"
+  entityType String    @db.VarChar(50)  // "rfq", "message", "offer", "purchase"
+  entityId  String     @db.VarChar(100)
+  
+  details   String?    @db.Text
+  status    String?    @db.VarChar(50)
+  
+  createdAt DateTime   @default(now())
+  
+  @@index([entityType])
+  @@index([createdAt])
+}

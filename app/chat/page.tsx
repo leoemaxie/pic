@@ -85,7 +85,7 @@ export default function Chat() {
             <div className="bg-surface-2 border border-bd rounded-[14px] px-3.5 py-3 text-[14px] italic text-text-muted flex items-center justify-between gap-3">
               <span>Your call.</span>
               <span className="not-italic text-[10px] tracking-[0.04em] uppercase font-bold text-text-subtle whitespace-nowrap">
-                no forecast · only facts
+                facts · your decision
               </span>
             </div>
           </PicBubble>

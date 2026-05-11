@@ -43,13 +43,13 @@ export default function Wholesaler() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 flex flex-col gap-3 pb-2">
-        <SectionLabel className="mt-1">Demand signals · this week</SectionLabel>
+        <SectionLabel className="mt-1">Active inquiries · this week</SectionLabel>
 
         <DemandSignalCard
           count={5}
           product="Looking for rice"
           meta="under ₦72k · 50kg bag"
-          helper="your price ₦68k beats demand →"
+          helper="your price ₦68k is below the current ask"
           good
         />
         <DemandSignalCard
@@ -91,7 +91,7 @@ export default function Wholesaler() {
         </Card>
 
         <div className="text-center text-[11px] text-text-subtle py-1 italic">
-          5 retailers viewed your rice today.
+          5 retailers checked rice pricing today.
         </div>
       </div>
 

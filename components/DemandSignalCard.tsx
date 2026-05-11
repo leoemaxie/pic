@@ -30,7 +30,7 @@ export function DemandSignalCard({
             good ? "text-good-fg" : "text-text-subtle"
           }`}
         >
-          retailers
+          inquiries
         </div>
       </div>
       <div className="flex-1 min-w-0">

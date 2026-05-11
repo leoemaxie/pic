@@ -97,7 +97,7 @@ export default function Briefing() {
         </Card>
 
         <div className="text-center text-[11px] text-text-subtle py-2 italic">
-          No forecasts. Just facts and comparisons.
+          Shared history and market facts, side by side.
         </div>
       </div>
 

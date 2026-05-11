@@ -10,6 +10,7 @@ import {
   Package,
   ShoppingBag,
   User,
+  Leaf,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 
@@ -17,6 +18,7 @@ const retailerNav = [
   { to: "/home", label: "Home", icon: HomeIcon },
   { to: "/chat", label: "Ask PIC", icon: MessageCircle },
   { to: "/briefing", label: "Briefing", icon: Calendar },
+  { to: "/staples", label: "Staples", icon: Leaf },
   { to: "/records", label: "Records", icon: FileText },
 ];
 

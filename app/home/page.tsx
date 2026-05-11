@@ -89,9 +89,10 @@ export default function Home() {
                 Comparison
               </div>
               <div className="text-[15px] leading-[1.5] mt-1.5 text-cta-fg">
-                You usually pay <b>₦72k</b>. Kano{" "}
-                <b className="text-inv-good">₦4k cheaper</b>.{" "}
-                <span className="italic opacity-60">Your call.</span>
+                You usually pay <b>₦72k</b>. Kano has{" "}
+                <b className="text-inv-good">₦68k</b>. That's{" "}
+                <b className="text-inv-good">₦4k per bag</b>.{" "}
+                <span className="italic opacity-60">Your choice.</span>
               </div>
             </div>
           </div>
@@ -118,18 +119,18 @@ export default function Home() {
                     Kano · ₦68k
                   </div>
                   <div className="mt-1 text-[12px] leading-[1.45] text-text-muted">
-                    Save ₦6k per bag if you can wait.
+                    Your last buy was ₦74k, so this is ₦6 per bag lower.
                   </div>
                 </div>
                 <div className="rounded-[16px] bg-surface-2 border border-bd p-3">
                   <div className="text-[10px] font-bold tracking-[0.06em] uppercase text-text-subtle">
-                    Your last buy
+                    Your buying pattern
                   </div>
                   <div className="mt-1 text-[16px] font-extrabold text-text">
-                    ₦74k · rice
+                    Every 2 weeks
                   </div>
                   <div className="mt-1 text-[12px] leading-[1.45] text-text-muted">
-                    Still close to market average, but trending upward.
+                    Based on your 4 rice purchases over the last month.
                   </div>
                 </div>
               </div>
