@@ -42,8 +42,10 @@ export function BottomNav() {
           const Icon = item.icon;
           const active = persona === "wholesaler" ? Boolean((item as { active?: boolean }).active) : pathname === item.to;
           return (
-            <div
+            <button
               key={item.label}
+              onClick={persona === "wholesaler" ? undefined : () => router.push(item.to)}
+              aria-label={item.label}
               className={"flex-1 flex flex-col items-center gap-0.5 " +
                 (persona !== "wholesaler" ? "py-1 active:scale-95 transition-transform" : "")
               }
@@ -58,7 +60,7 @@ export function BottomNav() {
               >
                 {item.label}
               </span>
-            </div>
+            </button>
           );
         })}
       </div>
