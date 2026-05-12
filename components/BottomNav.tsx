@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -40,14 +40,24 @@ export function BottomNav() {
       <div className="flex border-t border-bd bg-bg-deep px-2 pt-2 pb-3.5 lg:hidden">
         {items.map((item) => {
           const Icon = item.icon;
-          const active = persona === "wholesaler" ? Boolean((item as { active?: boolean }).active) : pathname === item.to;
+          const active =
+            persona === "wholesaler"
+              ? Boolean((item as { active?: boolean }).active)
+              : pathname === item.to;
           return (
             <button
               key={item.label}
-              onClick={persona === "wholesaler" ? undefined : () => router.push(item.to)}
+              onClick={
+                persona === "wholesaler"
+                  ? undefined
+                  : () => router.push(item.to)
+              }
               aria-label={item.label}
-              className={"flex-1 flex flex-col items-center gap-0.5 " +
-                (persona !== "wholesaler" ? "py-1 active:scale-95 transition-transform" : "")
+              className={
+                "flex-1 flex flex-col items-center gap-0.5 " +
+                (persona !== "wholesaler"
+                  ? "py-1 active:scale-95 transition-transform"
+                  : "")
               }
             >
               <Icon
@@ -56,7 +66,11 @@ export function BottomNav() {
                 className={active ? "text-text" : "text-text-faint"}
               />
               <span
-                className={active ? "text-[10px] tracking-[0.02em] text-text font-bold" : "text-[10px] tracking-[0.02em] text-text-faint font-medium"}
+                className={
+                  active
+                    ? "text-[10px] tracking-[0.02em] text-text font-bold"
+                    : "text-[10px] tracking-[0.02em] text-text-faint font-medium"
+                }
               >
                 {item.label}
               </span>
@@ -69,11 +83,18 @@ export function BottomNav() {
         <div className="flex flex-col gap-2 rounded-[24px] border border-bd/80 bg-surface/90 p-2 shadow-float backdrop-blur-md">
           {items.map((item) => {
             const Icon = item.icon;
-            const active = persona === "wholesaler" ? Boolean((item as { active?: boolean }).active) : pathname === item.to;
+            const active =
+              persona === "wholesaler"
+                ? Boolean((item as { active?: boolean }).active)
+                : pathname === item.to;
             return (
               <button
                 key={item.label}
-                onClick={persona === "wholesaler" ? undefined : () => router.push(item.to)}
+                onClick={
+                  persona === "wholesaler"
+                    ? undefined
+                    : () => router.push(item.to)
+                }
                 className="w-12 h-12 rounded-[16px] flex flex-col items-center justify-center gap-0.5 transition-transform active:scale-95"
               >
                 <Icon
@@ -82,7 +103,11 @@ export function BottomNav() {
                   className={active ? "text-text" : "text-text-faint"}
                 />
                 <span
-                  className={active ? "text-[9px] tracking-[0.06em] uppercase whitespace-nowrap text-text font-bold" : "text-[9px] tracking-[0.06em] uppercase whitespace-nowrap text-text-faint font-medium"}
+                  className={
+                    active
+                      ? "text-[9px] tracking-[0.06em] uppercase whitespace-nowrap text-text font-bold"
+                      : "text-[9px] tracking-[0.06em] uppercase whitespace-nowrap text-text-faint font-medium"
+                  }
                 >
                   {item.label}
                 </span>
