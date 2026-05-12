@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Mic } from "lucide-react";
@@ -14,6 +14,12 @@ export default function Chat() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<string[]>([
+    "Rice prices have been going up. When should I restock?",
+  ]);
+  const recognitionRef = useRef<any>(null);
+  const [listening, setListening] = useState(false);
 
   useEffect(() => {
     if (phase === 0) {
@@ -33,7 +39,68 @@ export default function Chat() {
         behavior: "smooth",
       });
     }
-  }, [phase]);
+  }, [phase, messages.length]);
+
+  useEffect(() => {
+    // Initialize Web Speech API recognition if available
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recog = new SpeechRecognition();
+    recog.continuous = false;
+    recog.interimResults = true;
+    recog.lang = "en-US";
+
+    recog.onresult = (event: any) => {
+      let interim = "";
+      let final = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const res = event.results[i];
+        if (res.isFinal) final += res[0].transcript;
+        else interim += res[0].transcript;
+      }
+      setInput((prev) =>
+        final ? prev + final : interim ? prev + interim : prev,
+      );
+    };
+
+    recog.onend = () => {
+      setListening(false);
+    };
+
+    recognitionRef.current = recog;
+  }, []);
+
+  function startStopListening() {
+    const recog = recognitionRef.current;
+    if (!recog) return;
+    if (listening) {
+      recog.stop();
+      setListening(false);
+    } else {
+      try {
+        recog.start();
+        setListening(true);
+      } catch (e) {
+        // Some browsers throw if start is called too quickly
+        setListening(false);
+      }
+    }
+  }
+
+  function handleSend(e?: React.FormEvent) {
+    e?.preventDefault();
+    const text = input.trim();
+    if (!text) return;
+    setMessages((s) => [...s, text]);
+    setInput("");
+    // trigger simulated response flow
+    setPhase(0);
+    // small delay then advance to show bot
+    setTimeout(() => setPhase(1), 600);
+  }
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
@@ -62,17 +129,17 @@ export default function Chat() {
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3.5"
       >
-        <UserBubble>
-          Rice prices have been going up. When should I restock?
-        </UserBubble>
+        {messages.map((m, i) => (
+          <UserBubble key={i}>{m}</UserBubble>
+        ))}
 
         {phase === 0 && <TypingBubble />}
 
         {phase >= 1 && (
           <PicBubble className="slide-up">
             <PicBubbleSection label="1 · Your history">
-              ₦70k <span className="text-text-subtle">(2w ago)</span> → ₦72k → ₦74k →{" "}
-              <b>₦74k</b> last buy
+              ₦70k <span className="text-text-subtle">(2w ago)</span> → ₦72k →
+              ₦74k → <b>₦74k</b> last buy
             </PicBubbleSection>
             <PicBubbleSection label="2 · Market now">
               Most wholesalers <b>₦74k–₦76k</b>. Kano still{" "}
@@ -80,7 +147,8 @@ export default function Chat() {
             </PicBubbleSection>
             <PicBubbleSection label="3 · Your pattern">
               You buy every 2 weeks. Wait for Kano{" "}
-              <b className="text-good-fg">(saves ₦6k/bag)</b> or secure stock this week.
+              <b className="text-good-fg">(saves ₦6k/bag)</b> or secure stock
+              this week.
             </PicBubbleSection>
             <div className="bg-surface-2 border border-bd rounded-[14px] px-3.5 py-3 text-[14px] italic text-text-muted flex items-center justify-between gap-3">
               <span>Your call.</span>
@@ -138,16 +206,43 @@ export default function Chat() {
           </PicBubble>
         )}
       </div>
-
       <div className="px-5 pt-3 pb-4 border-t border-bd bg-bg-deep">
-        <div className="flex items-center gap-2.5 bg-surface border border-bd-strong rounded-full pl-[18px] pr-[6px] py-[6px] shadow-card">
-          <span className="text-text-subtle text-[14px] flex-1 font-medium">
-            Ask a follow-up…
-          </span>
-          <span className="w-9 h-9 rounded-full bg-cta-bg flex items-center justify-center">
-            <Mic size={15} strokeWidth={2.2} className="text-cta-fg" />
-          </span>
-        </div>
+        <form
+          onSubmit={handleSend}
+          className="flex items-center gap-2.5 bg-surface border border-bd-strong rounded-full pl-[12px] pr-[6px] py-[6px] shadow-card"
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                handleSend();
+              }
+            }}
+            placeholder="Ask a follow-up…"
+            className="flex-1 bg-transparent outline-none text-[14px] px-3 py-2"
+          />
+
+          <button
+            type="button"
+            onClick={startStopListening}
+            aria-pressed={listening}
+            className="w-9 h-9 rounded-full bg-cta-bg flex items-center justify-center ml-2"
+          >
+            <Mic
+              size={15}
+              strokeWidth={2.2}
+              className={listening ? "text-white animate-pulse" : "text-cta-fg"}
+            />
+          </button>
+
+          <button
+            type="submit"
+            className="ml-2 text-sm font-semibold text-text-muted px-3"
+          >
+            Send
+          </button>
+        </form>
       </div>
     </div>
   );
