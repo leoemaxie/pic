@@ -1,8 +1,7 @@
-'use client';
-import React from "react";
+"use client";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Store, Warehouse } from "lucide-react";
-import { ReactNode } from "react";
 import { DotIndicator } from "@/components/DotIndicator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -48,11 +47,29 @@ const SLIDES: Slide[] = [
   },
 ];
 
+const AUTO_ADVANCE_MS = 2600;
+
 export function Onboarding({ step }: { step: string }) {
   const router = useRouter();
-  const idx = Math.max(0, Math.min(2, parseInt(step ?? "1") - 1));
-  const slide = SLIDES[idx];
-  const isLast = idx === 2;
+  const initialIndex = Math.max(
+    0,
+    Math.min(SLIDES.length - 1, parseInt(step ?? "1", 10) - 1),
+  );
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    setActiveIndex(initialIndex);
+  }, [initialIndex]);
+
+  useEffect(() => {
+    if (activeIndex >= SLIDES.length - 1) return;
+
+    const timer = window.setTimeout(() => {
+      setActiveIndex((current) => Math.min(current + 1, SLIDES.length - 1));
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [activeIndex]);
 
   const chooseRole = (role: "retailer" | "wholesaler") => {
     if (role === "wholesaler") {
@@ -62,13 +79,8 @@ export function Onboarding({ step }: { step: string }) {
     router.push("/home");
   };
 
-  const next = () => {
-    if (isLast) router.push("/home");
-    else router.push(`/onboarding/${idx + 2}`);
-  };
-
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg" key={idx}>
+    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-bg">
       <div className="flex justify-between items-start px-5 pt-4 pb-1">
         <div className="w-10" />
         <div className="text-center">
@@ -82,81 +94,91 @@ export function Onboarding({ step }: { step: string }) {
         <ThemeToggle />
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-6 relative fade-in">
-        {slide.illo === "chat" && <ChatIllo />}
-        {slide.illo === "compare" && <CompareIllo />}
-        {slide.illo === "network" && <NetworkIllo />}
-      </div>
+      <div className="min-h-0 flex-1 overflow-hidden px-2">
+        <div
+          className="flex h-full transition-transform duration-500 ease-out will-change-transform"
+          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+        >
+          {SLIDES.map((slide, index) => (
+            <section
+              key={index}
+              className="flex h-full w-full shrink-0 flex-col px-5 pb-6 pt-3 text-center"
+            >
+              <div className="flex flex-1 items-center justify-center relative fade-in px-1">
+                {slide.illo === "chat" && <ChatIllo />}
+                {slide.illo === "compare" && <CompareIllo />}
+                {slide.illo === "network" && <NetworkIllo />}
+              </div>
 
-      <div className="px-8 text-center">
-        <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-text">
-          {slide.title}
-        </h1>
-        <p className="text-[14px] text-text-muted leading-[1.55] mt-3.5">{slide.body}</p>
+              <div className="px-5 text-center">
+                <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-text">
+                  {slide.title}
+                </h1>
+                <p className="text-[14px] text-text-muted leading-[1.55] mt-3.5">
+                  {slide.body}
+                </p>
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
 
       <div className="py-5 flex justify-center">
-        <DotIndicator total={3} active={idx} />
+        <DotIndicator total={SLIDES.length} active={activeIndex} />
       </div>
 
       <div className="px-6 pb-7 flex flex-col gap-2">
-        {isLast ? (
-          <>
-            <p className="text-center text-[12px] font-semibold tracking-[0.01em] text-text-subtle mb-1">
-              Choose how you want to use PIC
-            </p>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                onClick={() => chooseRole("retailer")}
-                className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
-                aria-label="Continue as Retailer"
-              >
-                <div className="w-9 h-9 rounded-xl bg-good-bg border border-good-bd flex items-center justify-center text-good-fg">
-                  <Store size={17} strokeWidth={2.2} />
-                </div>
-                <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">Retailer</div>
-                <div className="text-[11px] text-text-muted mt-0.5">Buy smarter for your shop</div>
-              </button>
-
-              <button
-                onClick={() => chooseRole("wholesaler")}
-                className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
-                aria-label="Continue as Wholesaler"
-              >
-                <div className="w-9 h-9 rounded-xl bg-rose flex items-center justify-center text-rose-fg">
-                  <Warehouse size={17} strokeWidth={2.2} />
-                </div>
-                <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">Wholesaler</div>
-                <div className="text-[11px] text-text-muted mt-0.5">Sell and reach more retailers</div>
-              </button>
+        <p className="text-center text-[12px] font-semibold tracking-[0.01em] text-text-subtle mb-1">
+          Choose how you want to use PIC
+        </p>
+        <div className="grid grid-cols-2 gap-2.5">
+          <button
+            onClick={() => chooseRole("retailer")}
+            className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
+            aria-label="Continue as Retailer"
+            type="button"
+          >
+            <div className="w-9 h-9 rounded-xl bg-good-bg border border-good-bd flex items-center justify-center text-good-fg">
+              <Store size={17} strokeWidth={2.2} />
             </div>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={next}
-              className="w-full bg-cta-bg text-cta-fg rounded-full py-4 font-bold text-[15px] tracking-[-0.01em] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-            >
-              Continue
-              <ArrowRight size={16} strokeWidth={2.4} />
-            </button>
-            <button
-              onClick={() => router.push("/home")}
-              className="text-[13px] font-medium text-text-muted py-2.5"
-            >
-              I'll skip the tour
-            </button>
-          </>
-        )}
+            <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">
+              Buyer (Retailer)
+            </div>
+            <div className="text-[11px] text-text-muted mt-0.5">
+              Buy smarter for your shop
+            </div>
+          </button>
+
+          <button
+            onClick={() => chooseRole("wholesaler")}
+            className="bg-surface border border-bd rounded-2xl px-3 py-3.5 text-left active:scale-[0.98] transition-transform shadow-float"
+            aria-label="Continue as Wholesaler"
+            type="button"
+          >
+            <div className="w-9 h-9 rounded-xl bg-rose flex items-center justify-center text-rose-fg">
+              <Warehouse size={17} strokeWidth={2.2} />
+            </div>
+            <div className="mt-2 text-[14px] font-extrabold text-text tracking-[-0.01em]">
+              Seller (Wholesaler)
+            </div>
+            <div className="text-[11px] text-text-muted mt-0.5">
+              Sell and reach more retailers
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function OnboardingPage({ params }: { params: Promise<{ step?: string | string[] }> }) {
+export default function OnboardingPage({
+  params,
+}: {
+  params: Promise<{ step?: string | string[] }>;
+}) {
   const resolved = React.use(params);
   const raw = resolved?.step;
-  const step = Array.isArray(raw) ? raw[0] : raw ?? "1";
+  const step = Array.isArray(raw) ? raw[0] : (raw ?? "1");
   return <Onboarding step={step} />;
 }
 
@@ -179,16 +201,26 @@ function ChatIllo() {
       />
       <div
         className="absolute bottom-6 right-2 w-[110px] h-[28px] bg-good-bg border border-good-bd rounded-full flex items-center justify-center text-[10px] font-bold tracking-[0.04em] text-good-fg shadow-float float-soft"
-        style={{ ["--r" as never]: "8deg", transform: "rotate(8deg)", animationDelay: "1s" }}
+        style={{
+          ["--r" as never]: "8deg",
+          transform: "rotate(8deg)",
+          animationDelay: "1s",
+        }}
       >
         RICE 50KG · ₦74k
       </div>
       <div
         className="absolute bottom-10 left-2 w-[34px] h-[20px] bg-cta-bg rounded-full shadow-float float-soft"
-        style={{ ["--r" as never]: "-10deg", transform: "rotate(-10deg)", animationDelay: "0.3s" }}
+        style={{
+          ["--r" as never]: "-10deg",
+          transform: "rotate(-10deg)",
+          animationDelay: "0.3s",
+        }}
       />
       <div className="bg-surface border border-bd rounded-[24px] rounded-bl-[6px] px-5 py-4 max-w-[230px] shadow-float relative z-10">
-        <div className="text-[10px] font-bold tracking-[0.06em] uppercase text-text-subtle">YOU</div>
+        <div className="text-[10px] font-bold tracking-[0.06em] uppercase text-text-subtle">
+          YOU
+        </div>
         <div className="text-[14px] text-text leading-[1.5] mt-1">
           Bought 5 bags rice at ₦74k from Lagos wholesaler today
         </div>
@@ -233,9 +265,15 @@ function CompareIllo() {
             <div className="flex-1 bg-bd-strong rounded h-5" />
             <div className="flex-1 bg-text rounded h-5" />
           </div>
-          <div className="text-[10px] text-text-subtle mt-2">your last 4 buys</div>
+          <div className="text-[10px] text-text-subtle mt-2">
+            your last 4 buys
+          </div>
         </div>
-        <ArrowRight size={14} className="text-text-subtle flex-shrink-0" strokeWidth={2.4} />
+        <ArrowRight
+          size={14}
+          className="text-text-subtle flex-shrink-0"
+          strokeWidth={2.4}
+        />
         <div className="bg-surface border border-bd rounded-[18px] p-3.5 w-[122px] shadow-float">
           <div className="text-[9px] font-bold tracking-[0.06em] uppercase text-text-subtle">
             MARKET LOW
@@ -243,7 +281,9 @@ function CompareIllo() {
           <div className="text-[22px] font-extrabold text-good-fg mt-0.5 tracking-[-0.02em]">
             ₦68k
           </div>
-          <div className="text-[10px] text-good-fg font-bold mt-2.5">Kano wholesaler</div>
+          <div className="text-[10px] text-good-fg font-bold mt-2.5">
+            Kano wholesaler
+          </div>
           <div className="text-[10px] text-text-subtle mt-1">save ₦6k/bag</div>
         </div>
       </div>
@@ -286,7 +326,9 @@ function NetworkIllo() {
             N
           </div>
           <div>
-            <div className="text-[12px] font-bold text-text">Ngozi · retailer</div>
+            <div className="text-[12px] font-bold text-text">
+              Ngozi · retailer
+            </div>
             <div className="text-[10px] text-text-subtle">looking · ₦72k</div>
           </div>
         </div>
@@ -298,7 +340,9 @@ function NetworkIllo() {
             I
           </div>
           <div>
-            <div className="text-[12px] font-bold text-text">Ibrahim · wholesaler</div>
+            <div className="text-[12px] font-bold text-text">
+              Ibrahim · wholesaler
+            </div>
             <div className="text-[10px] text-text-subtle">Kano · ₦68k</div>
           </div>
         </div>
