@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type RefObject,
+} from "react";
 import { ChatHeader } from "@/components/ChatHeader";
 import { MessageList } from "@/components/MessageList";
 import { ChatInput } from "@/components/ChatInput";
@@ -10,7 +16,7 @@ type Phase = 0 | 1 | 2 | 3;
 
 export default function Chat() {
   const [phase, setPhase] = useState<Phase>(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([
     "Rice prices have been going up. When should I restock?",
@@ -45,7 +51,7 @@ export default function Chat() {
         else interim += res[0].transcript;
       }
       setInput((prev) =>
-        final ? prev + final : interim ? prev + interim : prev
+        final ? prev + final : interim ? prev + interim : prev,
       );
     };
   }, [recognitionRef]);
@@ -90,10 +96,7 @@ export default function Chat() {
         className="lg:pl-24 lg:pr-8 lg:py-8 flex flex-col h-screen"
         style={{ height: "100dvh" }}
       >
-        <ChatHeader
-          listening={listening}
-          onMicClick={startStopListening}
-        />
+        <ChatHeader listening={listening} onMicClick={startStopListening} />
 
         <MessageList
           messages={messages}
