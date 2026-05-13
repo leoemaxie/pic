@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useEffect } from "react";
+import { FormEvent, useRef } from "react";
 import { Mic, Send } from "lucide-react";
 
 interface ChatInputProps {
