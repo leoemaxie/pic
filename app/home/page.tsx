@@ -27,16 +27,14 @@ export default function Home() {
             <div className="flex justify-between items-start">
               <div>
                 <div className="text-[12px] font-bold tracking-[0.06em] uppercase text-text-subtle">
-                  Good evening
+                  Good {new Date().getHours() < 12 ? "Morning" : "Evening"}
                 </div>
                 <div className="text-[26px] font-extrabold tracking-[-0.025em] leading-[1.12] text-text mt-0.5">
-                  Ngozi's
-                  <br />
-                  Provision
+                  Ngozi
                 </div>
                 <div className="text-[11px] text-text-subtle mt-1.5 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-good-fg" />
-                  Lagos · synced 2 min ago
+                  Ogbomoso
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -78,9 +76,9 @@ export default function Home() {
             <Card>
               <SectionLabel>Market now · nearby</SectionLabel>
               <div className="mt-3.5 flex flex-col gap-3">
-                <PriceRow location="Lagos" price="₦74k" />
-                <PriceRow location="Ibadan" price="₦71.5k" />
-                <PriceRow location="Kano" price="₦68k" badge="cheapest" variant="highlight" />
+                <PriceRow location="Oyo" price="₦74k" />
+                <PriceRow location="Iseyin" price="₦71.5k" />
+                <PriceRow location="Ilorin" price="₦68k" badge="cheapest" variant="highlight" />
               </div>
             </Card>
 
@@ -89,7 +87,7 @@ export default function Home() {
                 Comparison
               </div>
               <div className="text-[15px] leading-[1.5] mt-1.5 text-cta-fg">
-                You usually pay <b>₦72k</b>. Kano has{" "}
+                You usually pay <b>₦72k</b>. Ilorin has{" "}
                 <b className="text-inv-good">₦68k</b>. That's{" "}
                 <b className="text-inv-good">₦4k per bag</b>.{" "}
                 <span className="italic opacity-60">Your choice.</span>
@@ -116,7 +114,7 @@ export default function Home() {
                     Cheapest today
                   </div>
                   <div className="mt-1 text-[16px] font-extrabold text-good-fg">
-                    Kano · ₦68k
+                    Ilorin · ₦68k
                   </div>
                   <div className="mt-1 text-[12px] leading-[1.45] text-text-muted">
                     Your last buy was ₦74k, so this is ₦6 per bag lower.

@@ -84,7 +84,7 @@ export default function Briefing() {
               <b className="text-text-muted font-semibold text-[12px] uppercase tracking-[0.04em] block mb-0.5">
                 Tomatoes
               </b>
-              Range <b>₦8.2k–₦10.5k</b>. Lagos cheapest at{" "}
+              Range <b>₦8.2k–₦10.5k</b>. Iseyin cheapest at{" "}
               <b className="text-good-fg">₦8.8k</b>.
             </div>
             <div className="text-[14px] text-text leading-[1.55] pt-2.5 border-t border-bd">

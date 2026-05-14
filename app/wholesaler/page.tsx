@@ -30,7 +30,7 @@ export default function Wholesaler() {
           </button>
           <div>
             <div className="text-[12px] font-bold tracking-[0.06em] uppercase text-text-subtle">
-              Wholesaler · Kano
+              Wholesaler · Ilorin
             </div>
             <div className="text-[24px] font-extrabold tracking-[-0.025em] leading-[1.12] text-text mt-0.5">
               Ibrahim
@@ -55,7 +55,7 @@ export default function Wholesaler() {
         <DemandSignalCard
           count={2}
           product="Seeking tomatoes"
-          meta="crate · Lagos & Ibadan"
+          meta="crate · Ogbomoso & Ibadan"
           helper="you don't list this — add inventory?"
         />
 

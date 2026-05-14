@@ -41,7 +41,7 @@ function PriceHistorySection() {
 function MarketNowSection() {
   return (
     <PicBubbleSection label="2 · Market now">
-      Most wholesalers <b>₦74k–₦76k</b>. Kano still{" "}
+      Most wholesalers <b>₦74k–₦76k</b>. Ilorin still{" "}
       <b className="text-good-fg">₦68k</b>.
     </PicBubbleSection>
   );
@@ -50,7 +50,7 @@ function MarketNowSection() {
 function PatternSection() {
   return (
     <PicBubbleSection label="3 · Your pattern">
-      You buy every 2 weeks. Wait for Kano{" "}
+      You buy every 2 weeks. Wait for Ilorin{" "}
       <b className="text-good-fg">(saves ₦6k/bag)</b> or secure stock this week.
     </PicBubbleSection>
   );
@@ -69,7 +69,7 @@ function CallToActionBox() {
   return (
     <div className={containerClass}>
       <span>Your call.</span>
-      <span className={labelClass}>facts · your decision</span>
+      <span className={labelClass}>your decision</span>
     </div>
   );
 }
@@ -142,8 +142,8 @@ export function MessageList({
             Two on the network are below ₦74k right now:
           </div>
           <WholesalerCard
-            name="Kano Wholesaler A"
-            location="Kano"
+            name="Ilorin Wholesaler A"
+            location="Ilorin"
             price="₦68k"
             unit="bag"
             buyers="12 retailers bought last week"
@@ -151,8 +151,8 @@ export function MessageList({
             highlight
           />
           <WholesalerCard
-            name="Ibadan Wholesaler B"
-            location="Ibadan"
+            name="Iseyin Wholesaler B"
+            location="Iseyin"
             price="₦71.5k"
             unit="bag"
             delivery="Available today"
