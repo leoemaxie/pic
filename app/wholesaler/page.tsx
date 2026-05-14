@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
 import { Plus, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
 import { DemandSignalCard } from "@/components/DemandSignalCard";
-import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/lib/theme";
 
@@ -43,7 +42,9 @@ export default function Wholesaler() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 flex flex-col gap-3 pb-2">
-        <SectionLabel className="mt-1">Active inquiries · this week</SectionLabel>
+        <SectionLabel className="mt-1">
+          Active inquiries · this week
+        </SectionLabel>
 
         <DemandSignalCard
           count={5}
@@ -94,8 +95,6 @@ export default function Wholesaler() {
           5 retailers checked rice pricing today.
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 }
@@ -113,8 +112,7 @@ function InvRow({
   tag: string;
   tone?: "good" | "alert";
 }) {
-  const priceColor =
-    tone === "good" ? "text-good-fg" : "text-text";
+  const priceColor = tone === "good" ? "text-good-fg" : "text-text";
   const tagColor =
     tone === "good"
       ? "text-good-fg"
@@ -133,7 +131,9 @@ function InvRow({
         >
           {price}
         </div>
-        <div className={`text-[10px] mt-0.5 font-medium ${tagColor}`}>{tag}</div>
+        <div className={`text-[10px] mt-0.5 font-medium ${tagColor}`}>
+          {tag}
+        </div>
       </div>
     </div>
   );

@@ -1,13 +1,15 @@
-'use client';
+"use client";
 
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Pill } from "@/components/Pill";
-import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Briefing() {
+  const router = useRouter();
+
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
       <div className="px-5 pt-5 pb-3 flex justify-between items-start">
@@ -17,12 +19,20 @@ export default function Briefing() {
           </div>
           <div className="text-[26px] font-extrabold tracking-[-0.025em] leading-[1.12] text-text mt-0.5">
             Your market
-            <br />
-            & your history
+            <br />& your history
           </div>
         </div>
         <div className="flex flex-col gap-2 items-end">
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push("/home")}
+              aria-label="Go to home"
+              className="w-10 h-10 rounded-full bg-surface border border-bd flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <Home size={14} strokeWidth={2} className="text-text-muted" />
+            </button>
+            <ThemeToggle />
+          </div>
           <span className="bg-surface border border-bd rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.04em] uppercase text-text-subtle flex items-center gap-1">
             <Clock size={9} strokeWidth={2.2} /> 2h ago
           </span>
@@ -38,7 +48,9 @@ export default function Briefing() {
             <ItemRow product="Palm oil" sub="4 jugs · 25L" price="₦18.2k" />
           </div>
           <div className="mt-3.5 pt-3 border-t border-bd flex justify-between text-[11px]">
-            <span className="text-text-subtle italic">auto-logged from chat</span>
+            <span className="text-text-subtle italic">
+              auto-logged from chat
+            </span>
             <span className="text-text font-bold">3 items · ₦101.7k total</span>
           </div>
         </Card>
@@ -100,13 +112,19 @@ export default function Briefing() {
           Shared history and market facts, side by side.
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 }
 
-function ItemRow({ product, sub, price }: { product: string; sub: string; price: string }) {
+function ItemRow({
+  product,
+  sub,
+  price,
+}: {
+  product: string;
+  sub: string;
+  price: string;
+}) {
   return (
     <div className="flex justify-between items-baseline">
       <div>

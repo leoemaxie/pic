@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
 import { useState } from "react";
-import { BottomNav } from "@/components/BottomNav";
 import { StaplesHeader } from "@/components/staples/StaplesHeader";
 import { StapleCard } from "@/components/staples/StapleCard";
 import { StapleDetail } from "@/components/staples/StapleDetail";
@@ -9,7 +8,9 @@ import { STAPLES } from "@/components/staples/staplesData";
 
 export default function Staples() {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const selected = selectedItem ? STAPLES.find((s) => s.name === selectedItem) : null;
+  const selected = selectedItem
+    ? STAPLES.find((s) => s.name === selectedItem)
+    : null;
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg">
@@ -28,8 +29,6 @@ export default function Staples() {
         </div>
 
         {selected && <StapleDetail staple={selected} />}
-
-        <BottomNav />
       </div>
     </div>
   );

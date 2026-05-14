@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/lib/theme";
-import { BottomNav } from "@/components/BottomNav";
 import { RecordsHeader } from "@/components/records/RecordsHeader";
 import { ViewTabs } from "@/components/records/ViewTabs";
 import { Populated } from "@/components/records/Populated";
@@ -24,8 +23,6 @@ export default function Records() {
       {hasRecords && view === "purchases" && <Populated />}
       {hasRecords && view === "trends" && <TrendsView />}
       {!hasRecords && <Empty onAsk={() => router.push("/chat")} />}
-
-      <BottomNav />
     </div>
   );
 }

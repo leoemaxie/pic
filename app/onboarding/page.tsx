@@ -101,7 +101,7 @@ export function Onboarding({ step }: { step: string }) {
           {SLIDES.map((slide, index) => (
             <section
               key={index}
-              className="flex h-full w-full shrink-0 flex-col px-5 pb-1 pt-3 text-center"
+              className="flex h-full w-full shrink-0 flex-col px-5 pb-2 pt-3 text-center"
             >
               <div className="flex flex-1 items-center justify-center relative fade-in px-1">
                 {slide.illo === "chat" && <ChatIllo />}
@@ -113,7 +113,7 @@ export function Onboarding({ step }: { step: string }) {
                 <h1 className="text-[30px] font-extrabold leading-[1.1] tracking-[-0.025em] text-text">
                   {slide.title}
                 </h1>
-                <p className="text-[14px] text-text-muted leading-[1.55] mt-2.5 -mb-[0.5em]">
+                <p className="text-[14px] text-text-muted leading-[1.55] mt-3.5 -mb-[0.5em]">
                   {slide.body}
                 </p>
               </div>
@@ -122,7 +122,7 @@ export function Onboarding({ step }: { step: string }) {
         </div>
       </div>
 
-      <div className="py-3 flex justify-center">
+      <div className="py-5 flex justify-center">
         <DotIndicator total={SLIDES.length} active={activeIndex} />
       </div>
 
