@@ -85,10 +85,10 @@ export function Onboarding({ step }: { step: string }) {
       <div className="flex justify-between items-start px-5 pt-4 pb-1">
         <div className="w-10" />
         <div className="text-center">
-          <div className="text-[14px] font-extrabold text-brand tracking-[-0.02em] leading-none">
+          <div className="text-2xl font-extrabold text-brand tracking-[-0.02em] leading-none">
             PIC
           </div>
-          <div className="text-[8px] font-bold tracking-[0.12em] uppercase text-text-subtle mt-0.5">
+          <div className="text-[12px] font-bold tracking-[0.12em] uppercase text-text-subtle mt-0.5">
             Price Intelligence
           </div>
         </div>
