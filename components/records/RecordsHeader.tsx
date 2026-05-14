@@ -1,7 +1,7 @@
 "use client";
 
-import { Home, RotateCcw } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { RotateCcw } from "lucide-react";
+import { BackToHome } from "@/components/BackToHome";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface RecordsHeaderProps {
@@ -9,8 +9,6 @@ interface RecordsHeaderProps {
 }
 
 export function RecordsHeader({ onReset }: RecordsHeaderProps) {
-  const router = useRouter();
-
   return (
     <div className="px-5 pt-5 pb-3 flex justify-between items-start">
       <div>
@@ -24,13 +22,7 @@ export function RecordsHeader({ onReset }: RecordsHeaderProps) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => router.push("/home")}
-          aria-label="Go to home"
-          className="w-10 h-10 rounded-full bg-surface border border-bd flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <Home size={14} strokeWidth={2} className="text-text-muted" />
-        </button>
+        <BackToHome />
         <button
           onClick={onReset}
           aria-label="Reset demo"

@@ -1,14 +1,14 @@
 "use client";
 
-import { Calendar, Clock, Home } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Calendar, Clock } from "lucide-react";
+import { BackToHome } from "@/components/BackToHome";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Pill } from "@/components/Pill";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Briefing() {
-  const router = useRouter();
+  // router not needed here; `BackToHome` handles navigation
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
@@ -24,13 +24,7 @@ export default function Briefing() {
         </div>
         <div className="flex flex-col gap-2 items-end">
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push("/home")}
-              aria-label="Go to home"
-              className="w-10 h-10 rounded-full bg-surface border border-bd flex items-center justify-center active:scale-90 transition-transform"
-            >
-              <Home size={14} strokeWidth={2} className="text-text-muted" />
-            </button>
+            <BackToHome />
             <ThemeToggle />
           </div>
           <span className="bg-surface border border-bd rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.04em] uppercase text-text-subtle flex items-center gap-1">

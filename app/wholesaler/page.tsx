@@ -1,11 +1,12 @@
 "use client";
 
-import { Plus, ArrowLeft } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/Card";
 import { SectionLabel } from "@/components/SectionLabel";
 import { DemandSignalCard } from "@/components/DemandSignalCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BackToHome } from "@/components/BackToHome";
 import { useTheme } from "@/lib/theme";
 
 export default function Wholesaler() {
@@ -21,12 +22,7 @@ export default function Wholesaler() {
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
       <div className="px-5 pt-5 pb-3 flex justify-between items-start">
         <div className="flex items-start gap-3">
-          <button
-            onClick={goBack}
-            className="w-10 h-10 rounded-full bg-surface border border-bd flex items-center justify-center active:scale-90 transition-transform mt-0.5"
-          >
-            <ArrowLeft size={14} strokeWidth={2} className="text-text" />
-          </button>
+          <BackToHome onClick={goBack} />
           <div>
             <div className="text-[12px] font-bold tracking-[0.06em] uppercase text-text-subtle">
               Wholesaler · Ilorin

@@ -1,5 +1,5 @@
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Mic } from "lucide-react";
+import { Mic } from "lucide-react";
+import { BackToHome } from "@/components/BackToHome";
 
 interface ChatHeaderProps {
   listening: boolean;
@@ -7,11 +7,7 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ listening, onMicClick }: ChatHeaderProps) {
-  const router = useRouter();
-
-  const backButtonClass =
-    "w-9 h-9 rounded-full bg-surface border border-bd flex items-center justify-center " +
-    "active:scale-90 transition-transform";
+  // left-side back control now supplied by BackToHome
 
   const micButtonClass =
     "w-9 h-9 rounded-full flex items-center justify-center relative " +
@@ -24,9 +20,9 @@ export function ChatHeader({ listening, onMicClick }: ChatHeaderProps) {
       className="flex items-center gap-2.5 px-5 pt-4 pb-3.5 border-b "
       style={{ borderColor: "var(--border-color)" }}
     >
-      <button onClick={() => router.push("/home")} className={backButtonClass}>
-        <ArrowLeft size={15} strokeWidth={2} className="text-text" />
-      </button>
+      <div>
+        <BackToHome className="w-9 h-9" />
+      </div>
 
       <div className="flex-1">
         <div className="text-[16px] font-extrabold tracking-[-0.01em] text-text">
