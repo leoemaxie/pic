@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { PersonaSheet } from "@/components/PersonaSheet";
 import { HomeContactSheet } from "@/components/HomeContactSheet";
-import { QuickAskBar } from "@/components/QuickAskBar";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { HeaderSection } from "./HeaderSection";
 import { VoiceCard } from "./VoiceCard";
