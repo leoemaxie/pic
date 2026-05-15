@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { PersonaSheet } from "@/components/PersonaSheet";
 import { HomeContactSheet } from "@/components/HomeContactSheet";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { haptic } from "@/lib/haptics";
 import { retailers, shortcuts } from "@/components/home/homeData";
 
 export function HomeHub() {
@@ -49,7 +50,7 @@ export function HomeHub() {
         <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-rose/10 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1440px] flex-col px-4 pb-8 pt-4 sm:px-5 lg:px-8 lg:py-8">
+      <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1440px] flex-col px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(0.75rem+env(safe-area-inset-top))] sm:px-5 lg:px-8 lg:py-8 lg:pb-8">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
@@ -69,8 +70,11 @@ export function HomeHub() {
               <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <button
-                  onClick={() => setSheetOpen(true)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-[15px] font-extrabold text-rose-fg active:scale-90 transition-transform"
+                  onClick={() => {
+                    haptic("light");
+                    setSheetOpen(true);
+                  }}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-rose text-[15px] font-extrabold text-rose-fg active:scale-90 transition-transform shadow-card"
                 >
                   N
                 </button>
@@ -110,7 +114,10 @@ export function HomeHub() {
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <button
-                  onClick={() => router.push("/chat")}
+                  onClick={() => {
+                    haptic("medium");
+                    router.push("/chat");
+                  }}
                   className="rounded-[18px] border border-bd bg-surface p-4 text-left active:scale-[0.99] transition-transform"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -127,7 +134,10 @@ export function HomeHub() {
                 </button>
 
                 <button
-                  onClick={() => setContactsOpen(true)}
+                  onClick={() => {
+                    haptic("light");
+                    setContactsOpen(true);
+                  }}
                   className="rounded-[18px] border border-bd bg-surface p-4 text-left active:scale-[0.99] transition-transform"
                 >
                   <div className="flex items-start justify-between gap-3">

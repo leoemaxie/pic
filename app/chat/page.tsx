@@ -17,6 +17,7 @@ type Phase = 0 | 1 | 2 | 3;
 export default function Chat() {
   const [phase, setPhase] = useState<Phase>(0);
   const scrollRef = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
+  const pageRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<string[]>([
     "Rice prices have been going up. When should I restock?",
@@ -83,8 +84,27 @@ export default function Chat() {
     }
   }
 
+  // Handle iOS keyboard height to keep input visible
+  useEffect(() => {
+    const handleResize = () => {
+      if (pageRef.current) {
+        const viewport = window.visualViewport;
+        if (viewport) {
+          const keyboardHeight = window.innerHeight - viewport.height;
+          pageRef.current.style.marginBottom = `${keyboardHeight}px`;
+        }
+      }
+    };
+
+    window.visualViewport?.addEventListener("resize", handleResize);
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div
+      ref={pageRef}
       className="relative min-h-[100dvh] w-full overflow-hidden bg-bg"
       style={{
         paddingLeft: "0",
@@ -92,10 +112,7 @@ export default function Chat() {
         paddingTop: "0",
       }}
     >
-      <div
-        className="lg:pl-24 lg:pr-8 lg:py-8 flex flex-col h-screen"
-        style={{ height: "100dvh" }}
-      >
+      <div className="lg:pl-24 lg:pr-8 lg:py-8 flex flex-col min-h-[100dvh] h-[100dvh]">
         <ChatHeader listening={listening} onMicClick={startStopListening} />
 
         <MessageList

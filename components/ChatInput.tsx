@@ -1,5 +1,6 @@
 import { FormEvent, useRef } from "react";
 import { Mic, Send } from "lucide-react";
+import { haptic } from "@/lib/haptics";
 
 interface ChatInputProps {
   input: string;
@@ -38,12 +39,12 @@ export function ChatInput({
     (isDisabled ? "opacity-40 pointer-events-none" : "opacity-100");
 
   const micButtonClass =
-    "w-9 h-9 rounded-full bg-cta-bg flex items-center justify-center ml-2";
+    "w-9 h-9 rounded-full bg-cta-bg flex items-center justify-center ml-2 active:scale-95 transition-transform";
 
   const micIconClass = listening ? "text-white animate-pulse" : "text-cta-fg";
 
   return (
-    <div className="px-5 pt-3 pb-4 border-t border-bd bg-bg-deep">
+    <div className="px-4 pt-3 pb-[calc(0.875rem+env(safe-area-inset-bottom))] border-t border-bd bg-bg-deep/90 backdrop-blur-md">
       <form onSubmit={onSend} className={formClass}>
         <input
           ref={inputRef}
@@ -51,12 +52,15 @@ export function ChatInput({
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a follow-up…"
-          className="flex-1 bg-transparent outline-none text-[14px] px-3 py-2"
+          className="flex-1 bg-transparent outline-none text-[15px] px-3 py-2"
         />
 
         <button
           type="button"
-          onClick={onMicClick}
+          onClick={() => {
+            haptic("light");
+            onMicClick();
+          }}
           aria-pressed={listening}
           className={micButtonClass}
         >
@@ -66,6 +70,7 @@ export function ChatInput({
         <button
           type="submit"
           disabled={isDisabled}
+          onClick={() => !isDisabled && haptic("medium")}
           className={sendButtonClass}
           aria-label="Send message"
         >

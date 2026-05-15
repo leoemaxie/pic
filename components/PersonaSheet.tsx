@@ -1,20 +1,55 @@
 'use client';
 
+import { useRef, useEffect, useState } from "react";
 import { Sun, Moon, User, Store, RotateCcw, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/lib/theme";
+import { haptic } from "@/lib/haptics";
 
 export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { theme, toggleTheme, persona, setPersona, hasRecords, setHasRecords } = useTheme();
   const router = useRouter();
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      setTouchStart(e.touches[0].clientY);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (touchStart === null) return;
+      const touchEnd = e.changedTouches[0].clientY;
+      const distance = touchEnd - touchStart;
+
+      if (distance > 80) {
+        haptic("light");
+        onClose();
+      }
+      setTouchStart(null);
+    };
+
+    if (open && sheetRef.current) {
+      sheetRef.current.addEventListener("touchstart", handleTouchStart);
+      sheetRef.current.addEventListener("touchend", handleTouchEnd);
+    }
+
+    return () => {
+      if (sheetRef.current) {
+        sheetRef.current.removeEventListener("touchstart", handleTouchStart);
+        sheetRef.current.removeEventListener("touchend", handleTouchEnd);
+      }
+    };
+  }, [open, touchStart, onClose]);
 
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center lg:items-center lg:justify-end lg:px-8" onClick={onClose}>
       <div className="absolute inset-0 bg-black/40 fade-in" />
       <div
+        ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 slide-up lg:max-w-[420px] lg:rounded-[28px] lg:border lg:border-bd/80 lg:shadow-float lg:max-h-[calc(100dvh-4rem)] lg:overflow-y-auto"
+        className="relative w-full bg-surface border-t border-bd rounded-t-[28px] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] slide-up lg:max-w-[420px] lg:rounded-[28px] lg:border lg:border-bd/80 lg:shadow-float lg:max-h-[calc(100dvh-4rem)] lg:overflow-y-auto touch-none"
       >
         <div className="flex justify-center mb-3">
           <div className="w-10 h-1 rounded-full bg-bd-strong" />
@@ -38,7 +73,10 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
 
         <div className="flex flex-col gap-2">
           <button
-            onClick={toggleTheme}
+            onClick={() => {
+              haptic("light");
+              toggleTheme();
+            }}
             className="flex items-center gap-3 p-3 rounded-[14px] bg-surface-2 border border-bd active:scale-[0.99] transition-transform"
           >
             {theme === "light" ? (
@@ -56,6 +94,7 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
 
           <button
             onClick={() => {
+              haptic("medium");
               if (persona === "retailer") {
                 setPersona("wholesaler");
                 router.push("/wholesaler");
@@ -84,6 +123,7 @@ export function PersonaSheet({ open, onClose }: { open: boolean; onClose: () => 
 
           <button
             onClick={() => {
+              haptic("light");
               setHasRecords(!hasRecords);
               onClose();
               router.push("/records");

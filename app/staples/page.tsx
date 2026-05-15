@@ -14,7 +14,7 @@ export default function Staples() {
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg">
-      <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1440px] flex-col px-5 pb-24 pt-5 lg:px-8 lg:pl-24 lg:pr-8 lg:py-8">
+      <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[1440px] flex-col px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(0.875rem+env(safe-area-inset-top))] lg:px-8 lg:pl-24 lg:pr-8 lg:py-8 lg:pb-8">
         <StaplesHeader />
 
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

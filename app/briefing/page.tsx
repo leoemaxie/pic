@@ -12,7 +12,7 @@ export default function Briefing() {
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
-      <div className="px-5 pt-5 pb-3 flex justify-between items-start">
+      <div className="px-4 pt-[calc(0.875rem+env(safe-area-inset-top))] pb-3 flex justify-between items-start">
         <div>
           <div className="text-[12px] font-bold tracking-[0.06em] uppercase text-text-subtle flex items-center gap-1.5">
             <Calendar size={11} strokeWidth={2.2} /> Evening briefing
@@ -33,7 +33,7 @@ export default function Briefing() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 flex flex-col gap-3 pb-2">
+      <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
         <Card>
           <SectionLabel>1 · Your purchases this week</SectionLabel>
           <div className="mt-3.5 flex flex-col gap-3">

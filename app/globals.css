@@ -76,13 +76,36 @@ html, body {
     var(--bg);
 }
 
+html {
+  background: var(--bg);
+  color-scheme: light dark;
+}
+
 body {
   overscroll-behavior: none;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body, #__next {
+  min-height: 100%;
 }
 
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+input, textarea, button, select {
+  touch-action: manipulation;
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @keyframes typing-pulse {

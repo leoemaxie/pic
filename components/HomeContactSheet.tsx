@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import { MessageCircle, PhoneCall, X } from "lucide-react";
+import { haptic } from "@/lib/haptics";
 
 const contacts = [
   { name: "Ibrahim", place: "Kano", phone: "+2348000111111" },
@@ -15,15 +17,49 @@ export function HomeContactSheet({
   open: boolean;
   onClose: () => void;
 }) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      setTouchStart(e.touches[0].clientY);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (touchStart === null) return;
+      const touchEnd = e.changedTouches[0].clientY;
+      const distance = touchEnd - touchStart;
+
+      if (distance > 80) {
+        haptic("light");
+        onClose();
+      }
+      setTouchStart(null);
+    };
+
+    if (open && sheetRef.current) {
+      sheetRef.current.addEventListener("touchstart", handleTouchStart);
+      sheetRef.current.addEventListener("touchend", handleTouchEnd);
+    }
+
+    return () => {
+      if (sheetRef.current) {
+        sheetRef.current.removeEventListener("touchstart", handleTouchStart);
+        sheetRef.current.removeEventListener("touchend", handleTouchEnd);
+      }
+    };
+  }, [open, touchStart, onClose]);
+
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end bg-black/40 px-3 pb-3 lg:items-center lg:justify-end lg:px-6"
+      className="fixed inset-0 z-50 flex items-end bg-black/45 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:items-center lg:justify-end lg:px-6"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-[28px] bg-surface p-4 text-left shadow-float"
+        ref={sheetRef}
+        className="w-full max-w-md rounded-[28px] bg-surface p-4 text-left shadow-float border border-bd/80 touch-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -61,6 +97,7 @@ export function HomeContactSheet({
                 <div className="flex gap-2">
                   <a
                     href={`tel:${contact.phone}`}
+                    onClick={() => haptic("light")}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-good-bg text-good-fg"
                   >
                     <PhoneCall size={15} />

@@ -20,7 +20,7 @@ export default function Wholesaler() {
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-bg lg:pl-24 lg:pr-8 lg:py-8">
-      <div className="px-5 pt-5 pb-3 flex justify-between items-start">
+      <div className="px-4 pt-[calc(0.875rem+env(safe-area-inset-top))] pb-3 flex justify-between items-start">
         <div className="flex items-start gap-3">
           <BackToHome onClick={goBack} />
           <div>
@@ -37,7 +37,7 @@ export default function Wholesaler() {
         <ThemeToggle />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 flex flex-col gap-3 pb-2">
+      <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
         <SectionLabel className="mt-1">
           Active inquiries · this week
         </SectionLabel>

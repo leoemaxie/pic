@@ -17,7 +17,7 @@ export function ChatHeader({ listening, onMicClick }: ChatHeaderProps) {
 
   return (
     <div
-      className="flex items-center gap-2.5 px-5 pt-4 pb-3.5 border-b "
+      className="flex items-center gap-2.5 px-4 pt-[calc(0.875rem+env(safe-area-inset-top))] pb-3 border-b bg-bg/85 backdrop-blur-md"
       style={{ borderColor: "var(--border-color)" }}
     >
       <div>
@@ -35,7 +35,7 @@ export function ChatHeader({ listening, onMicClick }: ChatHeaderProps) {
           type="button"
           onClick={onMicClick}
           aria-pressed={listening}
-          className={micButtonClass}
+          className={micButtonClass + " shadow-card active:scale-95 transition-transform"}
         >
           <Mic size={15} strokeWidth={2.2} className={micIconClass} />
         </button>

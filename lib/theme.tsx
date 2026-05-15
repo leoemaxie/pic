@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark";
 type Persona = "retailer" | "wholesaler";
@@ -24,6 +24,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [hasRecords, setHasRecords] = useState(true);
   const [userId, setUserId] = useState<string>("");
 
+  useEffect(() => {
+    const themeColor = theme === "light" ? "#F4EFE6" : "#1A1612";
+    const meta = document.querySelector('meta[name="theme-color"]');
+
+    document.documentElement.style.colorScheme = theme;
+    if (meta) {
+      meta.setAttribute("content", themeColor);
+    }
+  }, [theme]);
+
   const value: Ctx = {
     theme,
     toggleTheme: () => setTheme((t) => (t === "light" ? "dark" : "light")),
@@ -37,7 +47,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={value}>
-      <div data-theme={theme} className="bg-bg text-text min-h-full h-full w-full">
+      <div
+        data-theme={theme}
+        className="bg-bg text-text min-h-[100dvh] h-full w-full"
+      >
         {children}
       </div>
     </ThemeContext.Provider>
