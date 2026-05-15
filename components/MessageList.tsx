@@ -89,7 +89,7 @@ function ActionButtons({
       <button onClick={onFindWholesalers} className={buttonClass}>
         Find cheaper wholesalers →
       </button>
-      <button className={buttonClass}>Compare tomatoes</button>
+      <button className={buttonClass}>Compare Spaghetti</button>
     </div>
   );
 }

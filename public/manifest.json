@@ -1,7 +1,7 @@
 {
-  "name": "PIC - Price Intelligence & Commerce",
+  "name": "PIC - Price Intelligence Companion",
   "short_name": "PIC",
-  "description": "Price Intelligence & Commerce Platform",
+  "description": "Price Intelligence & Companion",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
