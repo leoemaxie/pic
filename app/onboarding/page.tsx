@@ -180,5 +180,3 @@ export default function OnboardingPage({
   const step = Array.isArray(raw) ? raw[0] : (raw ?? "1");
   return <Onboarding step={step} />;
 }
-
-/* Illo components moved to ./Illos */
